@@ -2,12 +2,14 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<base href="/rbb-scores/">
+<base href="/RBB_Scores/">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RBB Scores</title>
+
+<!-- iOS Redirect-Fallback -->
 <script>
 (function () {
-  const base = "/rbb-scores/";
+  const base = "/RBB_Scores/";
   if (
     location.pathname === "/" ||
     location.pathname === "" ||
@@ -18,6 +20,8 @@
   }
 })();
 </script>
+
+<!-- PWA / iOS Meta -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="icon.png">
@@ -28,6 +32,7 @@
 @media (prefers-color-scheme: dark){
   :root { --bg:#121212; --fg:#fff; --card:#1e1e1e; }
 }
+
 body{
   font-family:Arial;
   margin:0;
@@ -35,6 +40,7 @@ body{
   background:var(--bg);
   color:var(--fg);
 }
+
 h2,h3{text-align:center;}
 input,select,button{
   padding:6px;
@@ -43,6 +49,13 @@ input,select,button{
 }
 input[type=number]{ text-align:center; }
 button{ cursor:pointer; }
+
+.app-icon {
+  width:40px;
+  height:40px;
+  display:block;
+  margin:0 auto 10px;
+}
 
 .container{display:flex;gap:10px;flex-wrap:wrap;}
 .team{
@@ -118,8 +131,8 @@ button{ cursor:pointer; }
 .input-row select{
   width:60px;
   text-align:center;
-  text-align-last:center;
 }
+
 .setup-line{
   text-align:center;
   margin-bottom:6px;
@@ -133,85 +146,89 @@ button{ cursor:pointer; }
 
 <!-- SETUP VIEW -->
 <div id="setupView">
+  <img src="icon.png" alt="RBB Icon" class="app-icon">
 
-<h3>Spiel-Setup</h3>
-<div class="setup-line">Heim: <input id="nameHeim"></div>
-<div class="setup-line">Gast: <input id="nameGast"></div>
+  <h3>Spiel-Setup</h3>
+  <div class="setup-line">Heim: <input id="nameHeim"></div>
+  <div class="setup-line">Gast: <input id="nameGast"></div>
 
-<div style="text-align:center;margin-top:10px;">
-  <button onclick="startGame()">Spiel starten</button>
-</div>
-
-<h3>Spieler anlegen</h3>
-<div class="input-row">
-Nr: <input id="num" type="number">
-Pkt: <input id="pts" type="number" step="0.5" min="-0.5" max="4.5">
-<select id="teamSelect">
-  <option value="heim">Heim</option>
-  <option value="gast">Gast</option>
-</select>
-<button onclick="addPlayer()">+</button>
-</div>
-
-<div class="container">
-  <div class="team">
-    <h3 id="heimTitleSetup"></h3>
-    <div id="heimPlayersSetup" class="players"></div>
+  <div style="text-align:center;margin-top:10px;">
+    <button onclick="startGame()">Spiel starten</button>
   </div>
-  <div class="team">
-    <h3 id="gastTitleSetup"></h3>
-    <div id="gastPlayersSetup" class="players"></div>
-  </div>
-</div>
 
+  <h3>Spieler anlegen</h3>
+  <div class="input-row">
+    Nr: <input id="num" type="number">
+    Pkt: <input id="pts" type="number" step="0.5" min="-0.5" max="4.5">
+    <select id="teamSelect">
+      <option value="heim">Heim</option>
+      <option value="gast">Gast</option>
+    </select>
+    <button onclick="addPlayer()">+</button>
+  </div>
+
+  <div class="container">
+    <div class="team">
+      <h3 id="heimTitleSetup"></h3>
+      <div id="heimPlayersSetup" class="players"></div>
+    </div>
+    <div class="team">
+      <h3 id="gastTitleSetup"></h3>
+      <div id="gastPlayersSetup" class="players"></div>
+    </div>
+  </div>
 </div>
 
 <!-- GAME VIEW -->
 <div id="gameView" style="display:none;">
+  <img src="icon.png" alt="RBB Icon" class="app-icon">
 
-<div class="periods" id="periods">
-  <div data-period="1">1. Viertel</div>
-  <div data-period="2">2. Viertel</div>
-  <div data-period="3">3. Viertel</div>
-  <div data-period="4">4. Viertel</div>
-  <div data-period="V">Verlängerung</div>
-</div>
+  <div class="periods" id="periods">
+    <div data-period="1">1. Viertel</div>
+    <div data-period="2">2. Viertel</div>
+    <div data-period="3">3. Viertel</div>
+    <div data-period="4">4. Viertel</div>
+    <div data-period="V">Verlängerung</div>
+  </div>
 
-<div class="container">
-<div class="team">
-<h3 id="heimTitle"></h3>
-<div id="heimPlayers" class="players"></div>
-<div id="heimStatus" class="status"></div>
-</div>
+  <div class="container">
+    <div class="team">
+      <h3 id="heimTitle"></h3>
+      <div id="heimPlayers" class="players"></div>
+      <div id="heimStatus" class="status"></div>
+    </div>
 
-<div class="team">
-<h3 id="gastTitle"></h3>
-<div id="gastPlayers" class="players"></div>
-<div id="gastStatus" class="status"></div>
-</div>
-</div>
+    <div class="team">
+      <h3 id="gastTitle"></h3>
+      <div id="gastPlayers" class="players"></div>
+      <div id="gastStatus" class="status"></div>
+    </div>
+  </div>
 
-<div style="text-align:center;margin-top:10px;">
-<button onclick="endGame()">Spiel beenden</button>
-</div>
-
+  <div style="text-align:center;margin-top:10px;">
+    <button onclick="endGame()">Spiel beenden</button>
+  </div>
 </div>
 
 <script>
+// ---- Daten ----
 let players=[];
 let active={heim:[],gast:[]};
 let log=[];
 let currentPeriod="1";
 let gameStarted=false;
 
+// ---- DOM ----
 const setupView=document.getElementById("setupView");
 const gameView=document.getElementById("gameView");
 const periodsDiv=document.getElementById("periods");
 
+// ---- Vibration ----
 function vibrate(ms=20){
   if(navigator.vibrate) navigator.vibrate(ms);
 }
 
+// ---- Perioden ----
 function setPeriod(p){
   currentPeriod=p;
   renderPeriods();
@@ -226,6 +243,7 @@ function renderPeriods(){
   d.onclick=()=>setPeriod(d.dataset.period);
 });
 
+// ---- Spiel starten ----
 function startGame(){
   if(players.length===0) return alert("Bitte Spieler anlegen");
   gameStarted=true;
@@ -235,6 +253,7 @@ function startGame(){
   render();
 }
 
+// ---- Spiel beenden ----
 function endGame(){
   if(!confirm("Spiel wirklich beenden?")) return;
   let csv="Zeit;Periode;Team;Spieler;Punkte\n";
@@ -253,6 +272,7 @@ function endGame(){
   render();
 }
 
+// ---- Spieler hinzufügen ----
 function addPlayer(){
   const num=document.getElementById("num");
   const pts=document.getElementById("pts");
@@ -265,6 +285,7 @@ function addPlayer(){
   render();
 }
 
+// ---- Spieler löschen ----
 function removePlayer(num,team){
   players=players.filter(p=>!(p.num===num && p.team===team));
   active[team]=active[team].filter(n=>n!==num);
@@ -272,6 +293,7 @@ function removePlayer(num,team){
   render();
 }
 
+// ---- Spieler toggle aktiv ----
 function toggle(team,num){
   const l=active[team];
   const i=l.indexOf(num);
@@ -282,6 +304,7 @@ function toggle(team,num){
   render();
 }
 
+// ---- Log Eintrag ----
 function logChange(team){
   const lineup=active[team];
   const sum=lineup.map(n=>players.find(p=>p.num==n)?.pts||0)
@@ -295,6 +318,7 @@ function logChange(team){
   });
 }
 
+// ---- Spieler rendern ----
 function renderPlayers(team,target,isSetup){
   const div=document.getElementById(target);
   div.innerHTML="";
@@ -312,6 +336,7 @@ function renderPlayers(team,target,isSetup){
   });
 }
 
+// ---- Render ----
 function render(){
   heimTitle.textContent=nameHeim.value||"Heim";
   gastTitle.textContent=nameGast.value||"Gast";
