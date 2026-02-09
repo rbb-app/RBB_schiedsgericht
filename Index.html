@@ -80,7 +80,7 @@ Gast: <input id="nameGast"><br>
 
 <h3>Spieler anlegen</h3>
 <div class="input-row">
-  Nr: <input id="num" type="number">
+  Nr: <input id="num" type="number" autocomplete="off">
   Pkt: <input id="pts" type="number" step="0.5" min="-0.5" max="4.5">
   Team:
   <select id="teamSelect">
@@ -109,6 +109,7 @@ let players = JSON.parse(localStorage.getItem("players")) || [];
 let active = JSON.parse(localStorage.getItem("active")) || { heim:[], gast:[] };
 let log = JSON.parse(localStorage.getItem("log")) || [];
 let currentPeriod = localStorage.getItem("currentPeriod") || "1";
+let gameStarted = false;
 
 const nameHeim = document.getElementById("nameHeim");
 const nameGast = document.getElementById("nameGast");
@@ -146,6 +147,7 @@ function save(){
 
 // Spiel starten
 function startGame(){
+  gameStarted = true;
   alert("Spiel gestartet: " + new Date().toLocaleString());
 }
 
@@ -167,6 +169,7 @@ function endGame(){
     players = [];
     active = { heim:[], gast:[] };
     log = [];
+    gameStarted = false;
     save();
     render();
   }
@@ -199,8 +202,9 @@ function toggle(team, num){
   save(); render();
 }
 
-// Spieler löschen
+// Spieler löschen (nur wenn Spiel nicht gestartet)
 function removePlayer(num, team){
+  if(gameStarted) return;
   players = players.filter(p => !(p.num==num && p.team===team));
   active[team] = active[team].filter(n => n!=num);
   save(); render();
@@ -234,7 +238,7 @@ function render(){
     players.filter(p=>p.team===team).forEach(p=>{
       const el = document.createElement("div");
       el.className = "player";
-      el.innerHTML = `#${p.num}<br>${p.pts} <span class="remove" onclick="removePlayer(${p.num},'${team}')">×</span>`;
+      el.innerHTML = `<strong>#${p.num}</strong><br><span style="font-size:0.8em;">${p.pts.toFixed(1)}</span> <span class="remove" onclick="removePlayer(${p.num},'${team}')">×</span>`;
       if(active[team].includes(p.num)) el.classList.add("active");
       el.onclick = (e)=>{
         if(!e.target.classList.contains("remove")) toggle(team, p.num);
