@@ -19,14 +19,6 @@
 body{ font-family:Arial; margin:0; padding:10px; background:var(--bg); color:var(--fg); }
 
 .app-icon-large{ display:block; margin:20px auto; width:120px; height:120px; }
-.app-icon-small{
-  position:absolute;
-  top:10px;
-  left:10px;
-  width:40px;
-  height:40px;
-  z-index:10;
-}
 
 .input-row{ display:flex; flex-direction:column; align-items:center; gap:4px; margin-bottom:10px; }
 .input-top{ display:flex; gap:4px; align-items:center; flex-wrap:wrap; justify-content:center; }
@@ -72,9 +64,8 @@ button{ cursor:pointer; }
 .status{ text-align:center; font-weight:bold; margin-top:6px; }
 .ok{color:#4caf50;} .fail{color:#f44336;}
 
-.periods{ display:flex; gap:4px; justify-content:center; margin-top:60px; margin-bottom:6px; flex-wrap:nowrap; }
-.periods div{ padding:8px 10px; border-radius:6px; border:1px solid #666; cursor:pointer; min-width:40px; text-align:center; font-size:0.85em; }
-.periods div.active{ background:#4caf50; color:#fff; }
+.periods{ display:flex; gap:4px; justify-content:center; margin-top:0; margin-bottom:6px; flex-wrap:nowrap; }
+#gameView { padding-top:60px; } /* Abstand von Statusbar */
 
 .setup-line{ text-align:center; margin-bottom:6px; }
 </style>
@@ -122,8 +113,6 @@ button{ cursor:pointer; }
 
 <!-- GAME VIEW -->
 <div id="gameView" style="display:none; position:relative;">
-  <img src="icon.png" class="app-icon-small" alt="RBB Scores Icon">
-
   <div class="periods" id="periods">
     <div data-period="1">Q1</div>
     <div data-period="2">Q2</div>
@@ -193,7 +182,6 @@ function addPlayer(){
   const pts=+document.getElementById("pts").value;
   const team=document.getElementById("teamSelect").value;
   if(!num||!pts) return;
-
   if(players.some(p=>p.team===team && p.num===num)){ alert("This number is already taken for this team!"); return; }
   if(players.filter(p=>p.team===team).length>=12){ alert("Maximum 12 players per team allowed!"); return; }
 
