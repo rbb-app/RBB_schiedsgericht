@@ -25,35 +25,99 @@ body{
   display:flex;
   flex-direction:column;
 }
-input,select,button{padding:6px;font-size:15px;margin:3px;}
+input,select,button{
+  padding:6px;
+  font-size:15px;
+  margin:3px;
+}
+input[type=number]{
+  text-align:center;
+}
 h2,h3{text-align:center;}
+button{cursor:pointer;}
+
 .container{display:flex;gap:10px;flex-wrap:wrap;}
-.team{flex:1;background:var(--card);border-radius:10px;padding:10px;min-width:140px;}
+.team{
+  flex:1;
+  background:var(--card);
+  border-radius:10px;
+  padding:10px;
+  min-width:140px;
+  transition: background 0.3s;
+}
+.team.ok-bg{ background: rgba(76,175,80,0.15); }
+.team.fail-bg{ background: rgba(244,67,54,0.15); }
+
 .players{display:flex;flex-wrap:wrap;gap:6px;}
 .player{
-  padding:10px;border:3px solid #666;border-radius:10px;
-  min-width:60px;text-align:center;cursor:pointer;position:relative;
+  padding:10px;
+  border:3px solid #666;
+  border-radius:10px;
+  min-width:60px;
+  text-align:center;
+  cursor:pointer;
+  position:relative;
+  transition: background 0.2s, transform 0.1s;
 }
-.player.active{background:rgba(0,255,0,.15);}
+.player.active{
+  background: rgba(0,255,0,0.25);
+  transform: scale(1.03);
+}
 .player span.remove{
-  position:absolute; top:2px; right:4px; color:red; font-weight:bold; cursor:pointer;
+  position:absolute;
+  top:2px;
+  right:4px;
+  color:red;
+  font-weight:bold;
+  cursor:pointer;
 }
-.status{text-align:center;font-weight:bold;margin-top:6px;}
-.ok{color:#4caf50;} .fail{color:#f44336;}
-button{cursor:pointer;}
-.periods{display:flex;gap:5px;justify-content:center;margin-bottom:10px; flex-wrap:wrap;}
+.status{
+  text-align:center;
+  font-weight:bold;
+  margin-top:6px;
+}
+.ok{color:#4caf50;}
+.fail{color:#f44336;}
+
+.periods{
+  display:flex;
+  gap:5px;
+  justify-content:center;
+  margin-bottom:10px;
+  flex-wrap:wrap;
+}
 .periods div{
-  padding:12px 16px; border-radius:8px; border:1px solid #666; cursor:pointer; user-select:none;
-  min-width:70px; text-align:center; transition: background 0.2s, transform 0.1s;
+  padding:12px 16px;
+  border-radius:8px;
+  border:1px solid #666;
+  cursor:pointer;
+  user-select:none;
+  min-width:70px;
+  text-align:center;
+  transition: background 0.2s, transform 0.1s;
   touch-action: manipulation;
+}
+.periods div.active{
+  background:#4caf50;
+  color:#fff;
 }
 .periods div:active{
   transform: scale(0.95);
 }
-.periods div.active{background:#4caf50;color:#fff;}
-.input-row{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:10px;}
-.input-row input, .input-row select{width:60apx; text-align:center;}
-.input-row button{padding:6px 12px;}
+
+.input-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  justify-content:center;
+  margin-bottom:10px;
+}
+.input-row input,
+.input-row select{
+  width:60px;
+  text-align:center;
+  text-align-last:center;
+}
 </style>
 </head>
 
@@ -61,10 +125,31 @@ button{cursor:pointer;}
 
 <h2>RBB Scores</h2>
 
+<!-- SETUP VIEW -->
+<div id="setupView">
+
 <h3>Spiel-Setup</h3>
 <div style="text-align:center;">
 Heim: <input id="nameHeim">
 Gast: <input id="nameGast"><br>
+<button onclick="startGame()">Spiel starten</button>
+</div>
+
+<h3>Spieler anlegen</h3>
+<div class="input-row">
+Nr: <input id="num" type="number" autocomplete="off">
+Pkt: <input id="pts" type="number" step="0.5" min="-0.5" max="4.5">
+<select id="teamSelect">
+  <option value="heim">Heim</option>
+  <option value="gast">Gast</option>
+</select>
+<button onclick="addPlayer()">+</button>
+</div>
+
+</div>
+
+<!-- GAME VIEW -->
+<div id="gameView" style="display:none;">
 
 <div class="periods" id="periods">
   <div data-period="1">1. Viertel</div>
@@ -72,22 +157,6 @@ Gast: <input id="nameGast"><br>
   <div data-period="3">3. Viertel</div>
   <div data-period="4">4. Viertel</div>
   <div data-period="V">Verlängerung</div>
-</div>
-
-<button onclick="startGame()">Spiel starten</button>
-<button onclick="endGame()">Spiel beenden</button>
-</div>
-
-<h3>Spieler anlegen</h3>
-<div class="input-row">
-  Nr: <input id="num" type="number" autocomplete="off">
-  Pkt: <input id="pts" type="number" step="0.5" min="-0.5" max="4.5">
-  Team:
-  <select id="teamSelect">
-    <option value="heim">Heim</option>
-    <option value="gast">Gast</option>
-  </select>
-  <button onclick="addPlayer()">+</button>
 </div>
 
 <div class="container">
@@ -104,155 +173,133 @@ Gast: <input id="nameGast"><br>
 </div>
 </div>
 
+<div style="text-align:center;margin-top:10px;">
+<button onclick="endGame()">Spiel beenden</button>
+</div>
+
+</div>
+
 <script>
-let players = JSON.parse(localStorage.getItem("players")) || [];
-let active = JSON.parse(localStorage.getItem("active")) || { heim:[], gast:[] };
-let log = JSON.parse(localStorage.getItem("log")) || [];
-let currentPeriod = localStorage.getItem("currentPeriod") || "1";
+let players = [];
+let active = { heim:[], gast:[] };
+let log = [];
+let currentPeriod = "1";
 let gameStarted = false;
 
-const nameHeim = document.getElementById("nameHeim");
-const nameGast = document.getElementById("nameGast");
+const setupView = document.getElementById("setupView");
+const gameView = document.getElementById("gameView");
 const periodsDiv = document.getElementById("periods");
 
-nameHeim.value = localStorage.getItem("nameHeim") || "Heim";
-nameGast.value = localStorage.getItem("nameGast") || "Gast";
+function vibrate(ms=20){
+  if(navigator.vibrate) navigator.vibrate(ms);
+}
 
-// Perioden Toggle
-function setPeriod(period){
-  currentPeriod = period;
-  localStorage.setItem("currentPeriod", period);
+function setPeriod(p){
+  currentPeriod = p;
   renderPeriods();
+  vibrate(15);
 }
 
 function renderPeriods(){
-  Array.from(periodsDiv.children).forEach(div=>{
-    div.classList.toggle("active", div.dataset.period===currentPeriod);
+  [...periodsDiv.children].forEach(d=>{
+    d.classList.toggle("active", d.dataset.period===currentPeriod);
   });
 }
 
-Array.from(periodsDiv.children).forEach(div=>{
-  div.onclick = ()=>setPeriod(div.dataset.period);
+[...periodsDiv.children].forEach(d=>{
+  d.onclick=()=>setPeriod(d.dataset.period);
 });
 
-// Speicherfunktion
-function save(){
-  localStorage.setItem("players", JSON.stringify(players));
-  localStorage.setItem("active", JSON.stringify(active));
-  localStorage.setItem("log", JSON.stringify(log));
-  localStorage.setItem("nameHeim", nameHeim.value);
-  localStorage.setItem("nameGast", nameGast.value);
-  localStorage.setItem("currentPeriod", currentPeriod);
-}
-
-// Spiel starten
 function startGame(){
-  gameStarted = true;
-  alert("Spiel gestartet: " + new Date().toLocaleString());
+  if(players.length===0) return alert("Bitte Spieler anlegen");
+  gameStarted=true;
+  setupView.style.display="none";
+  gameView.style.display="block";
+  vibrate(50);
+  render();
 }
 
-// Spiel beenden
 function endGame(){
-  if(confirm("Spiel wirklich beenden?")) {
-    // Log herunterladen
-    let csv = "Zeit;Periode;Team;Spieler;Punkte\n";
-    log.forEach(l=>{
-      csv += `${l.time};${l.period};${l.team};${l.lineup.join(",")};${l.points}\n`;
-    });
-    const blob = new Blob([csv], {type:"text/csv"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "wechselhistorie.csv";
-    a.click();
+  if(!confirm("Spiel wirklich beenden?")) return;
 
-    // Reset
-    players = [];
-    active = { heim:[], gast:[] };
-    log = [];
-    gameStarted = false;
-    save();
-    render();
-  }
+  let csv="Zeit;Periode;Team;Spieler;Punkte\n";
+  log.forEach(l=>{
+    csv+=`${l.time};${l.period};${l.team};${l.lineup.join(",")};${l.points}\n`;
+  });
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+  a.download="wechselhistorie.csv";
+  a.click();
+
+  players=[]; active={heim:[],gast:[]}; log=[];
+  gameStarted=false;
+  setupView.style.display="block";
+  gameView.style.display="none";
+  render();
 }
 
-// Spieler hinzufügen
 function addPlayer(){
-  const num = document.getElementById("num");
-  const pts = document.getElementById("pts");
-  const teamSelect = document.getElementById("teamSelect");
-  if(!num.value || !pts.value) return;
-  players.push({
-    num: num.value,
-    pts: parseFloat(pts.value),
-    team: teamSelect.value
-  });
+  const num=document.getElementById("num");
+  const pts=document.getElementById("pts");
+  const team=document.getElementById("teamSelect").value;
+  if(!num.value||!pts.value) return;
+  players.push({num:+num.value,pts:+pts.value,team});
   players.sort((a,b)=>a.num-b.num);
-  save(); render();
   num.value=""; pts.value="";
+  vibrate(10);
+  render();
 }
 
-// Spieler toggle aktiv
-function toggle(team, num){
-  const list = active[team];
-  const i = list.indexOf(num);
-  if(i >= 0) list.splice(i,1);
-  else if(list.length < 5) list.push(num);
-
+function toggle(team,num){
+  const l=active[team];
+  const i=l.indexOf(num);
+  if(i>=0) l.splice(i,1);
+  else if(l.length<5) l.push(num);
   logChange(team);
-  save(); render();
+  vibrate(20);
+  render();
 }
 
-// Spieler löschen (nur wenn Spiel nicht gestartet)
-function removePlayer(num, team){
-  if(gameStarted) return;
-  players = players.filter(p => !(p.num==num && p.team===team));
-  active[team] = active[team].filter(n => n!=num);
-  save(); render();
-}
-
-// Log Eintrag
 function logChange(team){
-  const lineup = active[team];
-  const sum = lineup
-    .map(n => players.find(p=>p.num==n)?.pts || 0)
+  const lineup=active[team];
+  const sum=lineup.map(n=>players.find(p=>p.num==n)?.pts||0)
     .reduce((a,b)=>a+b,0);
-
   log.push({
-    time: new Date().toLocaleTimeString(),
-    period: currentPeriod,
-    team: team==="heim" ? nameHeim.value : nameGast.value,
-    lineup: [...lineup],
-    points: sum.toFixed(1)
+    time:new Date().toLocaleTimeString(),
+    period:currentPeriod,
+    team:team,
+    lineup:[...lineup],
+    points:sum.toFixed(1)
   });
 }
 
-// Render
 function render(){
-  nameHeim.value && (heimTitle.textContent = nameHeim.value);
-  nameGast.value && (gastTitle.textContent = nameGast.value);
+  heimTitle.textContent=nameHeim.value||"Heim";
+  gastTitle.textContent=nameGast.value||"Gast";
   renderPeriods();
 
   ["heim","gast"].forEach(team=>{
-    const div = document.getElementById(team+"Players");
-    div.innerHTML = "";
+    const div=document.getElementById(team+"Players");
+    div.innerHTML="";
     players.filter(p=>p.team===team).forEach(p=>{
-      const el = document.createElement("div");
-      el.className = "player";
-      el.innerHTML = `<strong>#${p.num}</strong><br><span style="font-size:0.8em;">${p.pts.toFixed(1)}</span> <span class="remove" onclick="removePlayer(${p.num},'${team}')">×</span>`;
+      const el=document.createElement("div");
+      el.className="player";
+      el.innerHTML=`<strong>#${p.num}</strong><br>${p.pts.toFixed(1)}`;
       if(active[team].includes(p.num)) el.classList.add("active");
-      el.onclick = (e)=>{
-        if(!e.target.classList.contains("remove")) toggle(team, p.num);
-      };
+      el.onclick=()=>toggle(team,p.num);
       div.appendChild(el);
     });
 
-    const sum = active[team]
-      .map(n=>players.find(p=>p.num==n)?.pts || 0)
+    const sum=active[team].map(n=>players.find(p=>p.num==n)?.pts||0)
       .reduce((a,b)=>a+b,0);
 
-    const st = document.getElementById(team+"Status");
-    st.textContent = "Punkte: " + sum.toFixed(1);
-    st.className = "status " + (sum<=14.5 ? "ok" : "fail");
+    const st=document.getElementById(team+"Status");
+    st.textContent="Punkte: "+sum.toFixed(1);
+    st.className="status "+(sum<=14.5?"ok":"fail");
+
+    const tdiv=st.closest(".team");
+    tdiv.classList.remove("ok-bg","fail-bg");
+    tdiv.classList.add(sum<=14.5?"ok-bg":"fail-bg");
   });
 }
 
