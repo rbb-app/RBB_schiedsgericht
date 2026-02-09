@@ -27,13 +27,13 @@ body{ font-family:Arial; margin:0; padding:10px; background:var(--bg); color:var
 
 .bonus-toggle{
   display:inline-block;
-  padding:4px 6px;      /* kleiner für Touch */
+  padding:4px 6px;
   border-radius:6px;
-  font-size:0.75em;     /* kleinere Schrift */
+  font-size:0.75em;
   cursor:pointer;
   border:1px solid #666;
   user-select:none;
-  min-width:30px;       /* kleiner für Touch */
+  min-width:30px;
   text-align:center;
   margin:1px;
 }
@@ -65,8 +65,8 @@ button{ cursor:pointer; }
 .status{ text-align:center; font-weight:bold; margin-top:6px; }
 .ok{color:#4caf50;} .fail{color:#f44336;}
 
-.periods{ display:flex; gap:5px; justify-content:center; margin-bottom:10px; flex-wrap:wrap; }
-.periods div{ padding:12px 16px; border-radius:8px; border:1px solid #666; cursor:pointer; user-select:none; min-width:50px; text-align:center; }
+.periods{ display:flex; gap:4px; justify-content:center; margin-bottom:6px; flex-wrap:nowrap; }
+.periods div{ padding:8px 10px; border-radius:6px; border:1px solid #666; cursor:pointer; min-width:40px; text-align:center; font-size:0.85em; }
 .periods div.active{ background:#4caf50; color:#fff; }
 
 .setup-line{ text-align:center; margin-bottom:6px; }
@@ -215,8 +215,10 @@ function toggle(team,num){
 }
 
 function confirmChange(team){
-  active[team] = [...tempActive[team]]; 
-  logChange(team); 
+  const sum = tempActive[team].map(n=>players.find(p=>p.num==n)?.pts||0).reduce((a,b)=>a+b,0);
+  if(sum>14.5){ alert("Cannot confirm: total points exceed 14.5!"); return; }
+  active[team] = [...tempActive[team]];
+  logChange(team);
   render();
 }
 
@@ -260,6 +262,9 @@ function render(){
     const sum=tempActive[team].map(n=>players.find(p=>p.num==n)?.pts||0).reduce((a,b)=>a+b,0);
     const st=document.getElementById(team+"Status"); if(!st) return;
     st.textContent="Points: "+sum.toFixed(1);
+    if(tempActive[team].toString()!==active[team].toString()){
+      st.textContent += " (Not confirmed)";
+    }
     st.className="status "+(sum<=14.5?"ok":"fail");
     const tdiv=st.closest(".team"); tdiv.classList.remove("ok-bg","fail-bg"); tdiv.classList.add(sum<=14.5?"ok-bg":"fail-bg");
   });
