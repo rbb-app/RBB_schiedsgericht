@@ -11,7 +11,8 @@
   if (
     location.pathname === "/" ||
     location.pathname === "" ||
-    location.pathname === "/index.html"
+    location.pathname === "/index.html" ||
+    location.pathname === base + "index.html"
   ) {
     location.replace(base);
   }
