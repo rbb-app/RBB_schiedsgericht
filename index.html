@@ -34,9 +34,8 @@ body{
 button,input,select{font-size:14px;padding:6px;}
 h3{text-align:center;margin:8px 0;}
 .hidden{display:none;}
-/* ---------- SAFE AREA ---------- */
-#setupView{padding-top:calc(env(safe-area-inset-top)+12px);}
-#gameView{padding-top:calc(env(safe-area-inset-top)+12px);}
+
+/* ---------- HEADER ---------- */
 #appHeader{text-align:center;margin-bottom:10px;}
 #appHeader img{width:96px;height:96px;border-radius:20%;}
 
@@ -67,7 +66,7 @@ h3{text-align:center;margin:8px 0;}
 
 /* ---------- PERIODS ---------- */
 .periods{
-  margin-top:12px; /* Abstand zur Statusbar */
+  margin-top:12px;
   margin-bottom:16px;
   display:flex;
   gap:6px;
@@ -169,6 +168,7 @@ h3{text-align:center;margin:8px 0;}
 </div>
 
 <script>
+// --- Variables ---
 let players=[];
 let active={heim:[],gast:[]};
 let tempActive={heim:[],gast:[]};
@@ -176,7 +176,7 @@ let log=[];
 let period="Q1";
 let jb=false,fb=false;
 
-function vib(ms){if(navigator.vibrate) navigator.vibrate(ms);}
+const vib=m=>navigator.vibrate&&navigator.vibrate(m);
 const jbBtn=document.getElementById("jbBtn");
 const fbBtn=document.getElementById("fbBtn");
 const num=document.getElementById("num");
@@ -185,6 +185,7 @@ const teamSelect=document.getElementById("teamSelect");
 const setupView=document.getElementById("setupView");
 const gameView=document.getElementById("gameView");
 
+// --- Bonus toggles ---
 jbBtn.onclick=()=>{jb=!jb;jbBtn.classList.toggle("active",jb);};
 fbBtn.onclick=()=>{fb=!fb;fbBtn.classList.toggle("active",fb);};
 
@@ -195,6 +196,7 @@ function calcPts(p){
   return p;
 }
 
+// --- State Save / Load ---
 function saveState(){
   localStorage.setItem("players",JSON.stringify(players));
   localStorage.setItem("active",JSON.stringify(active));
@@ -222,6 +224,7 @@ function loadState(){
   }
 }
 
+// --- Player functions ---
 function addPlayer(){
   const n=+num.value,p=+pts.value,t=teamSelect.value;
   if(!n||isNaN(p))return;
@@ -244,6 +247,7 @@ function removePlayer(num,team){
   vib(20);
 }
 
+// --- Render ---
 function render(){
   document.getElementById("heimTitle").textContent=nameHeim.value;
   document.getElementById("gastTitle").textContent=nameGast.value;
@@ -288,6 +292,7 @@ function renderList(team,target,setup){
   });
 }
 
+// --- Active players ---
 function toggle(team,num){
   const l=tempActive[team];
   const i=l.indexOf(num);
@@ -297,6 +302,7 @@ function toggle(team,num){
   render();
 }
 
+// --- Confirm / Undo ---
 function confirmChange(team){
   const sum=tempActive[team].reduce((a,n)=>a+(players.find(p=>p.team===team&&p.num===n)?.pts||0),0);
   if(sum>14.5) return alert(">14.5 pts not allowed");
@@ -311,6 +317,7 @@ function undoChange(team){
   render();
 }
 
+// --- Game control ---
 function startGame(){
   tempActive={heim:[...active.heim],gast:[...active.gast]};
   period="Q1";
@@ -333,6 +340,7 @@ function endGame(){
   location.reload();
 }
 
+// --- Period click ---
 document.querySelectorAll(".periods div").forEach(d=>{
   d.onclick=()=>{
     period=d.dataset.p;
