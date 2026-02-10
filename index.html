@@ -24,6 +24,7 @@
 @media(prefers-color-scheme:dark){
   :root{--bg:#121212;--fg:#fff;--card:#1e1e1e;}
 }
+
 body{
   margin:0;
   padding:12px;
@@ -31,13 +32,21 @@ body{
   background:var(--bg);
   color:var(--fg);
 }
+
 button,input,select{
   font-size:14px;
   padding:6px;
 }
+
 h3{text-align:center;margin:8px 0;}
 .hidden{display:none;}
 
+/* ---------- SAFE AREA ---------- */
+#setupView{
+  padding-top: calc(env(safe-area-inset-top) + 8px);
+}
+
+/* ---------- HEADER ---------- */
 #appHeader{
   text-align:center;
   margin-bottom:10px;
@@ -48,7 +57,12 @@ h3{text-align:center;margin:8px 0;}
   border-radius:20%;
 }
 
-.container{display:flex;gap:10px;flex-wrap:wrap;}
+/* ---------- LAYOUT ---------- */
+.container{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
 .team{
   flex:1;
   background:var(--card);
@@ -60,6 +74,7 @@ h3{text-align:center;margin:8px 0;}
 .team.ok{background:var(--ok);}
 .team.fail{background:var(--fail);}
 
+/* ---------- PLAYERS ---------- */
 .players{
   display:flex;
   flex-wrap:wrap;
@@ -84,6 +99,7 @@ h3{text-align:center;margin:8px 0;}
   cursor:pointer;
 }
 
+/* ---------- BONUS TAGS ---------- */
 .bonus{
   position:absolute;
   font-size:10px;
@@ -95,6 +111,7 @@ h3{text-align:center;margin:8px 0;}
 .fb{top:2px;left:2px;background:#e91e63;}
 .jb{bottom:2px;left:2px;background:#3f51b5;}
 
+/* ---------- INPUT ---------- */
 .input-line{
   display:flex;
   gap:6px;
@@ -107,7 +124,7 @@ h3{text-align:center;margin:8px 0;}
   text-align:center;
 }
 
-/* Bonus buttons */
+/* ---------- BONUS BUTTONS ---------- */
 .bonus-btn{
   border:1px solid #666;
   border-radius:6px;
@@ -119,8 +136,10 @@ h3{text-align:center;margin:8px 0;}
 .bonus-btn.fb{background:#e91e63;color:#fff;}
 .bonus-btn.active{opacity:1;}
 
+/* ---------- PERIODS ---------- */
 .periods{
-  margin-top:env(safe-area-inset-top);
+  margin-top: calc(env(safe-area-inset-top) + 12px);
+  margin-bottom: 16px;
   display:flex;
   gap:6px;
   justify-content:center;
@@ -131,8 +150,12 @@ h3{text-align:center;margin:8px 0;}
   border:1px solid #666;
   cursor:pointer;
 }
-.periods .active{background:#4caf50;color:#fff;}
+.periods .active{
+  background:#4caf50;
+  color:#fff;
+}
 
+/* ---------- STATUS ---------- */
 .status{
   text-align:center;
   font-weight:bold;
@@ -144,7 +167,7 @@ h3{text-align:center;margin:8px 0;}
 
 <body>
 
-<!-- SETUP VIEW -->
+<!-- ================= SETUP VIEW ================= -->
 <div id="setupView">
 
   <div id="appHeader">
@@ -191,7 +214,7 @@ h3{text-align:center;margin:8px 0;}
   </div>
 </div>
 
-<!-- GAME VIEW -->
+<!-- ================= GAME VIEW ================= -->
 <div id="gameView" class="hidden">
 
   <div class="periods" id="periods">
@@ -239,14 +262,8 @@ let jb=false,fb=false;
 
 const vib=m=>navigator.vibrate&&navigator.vibrate(m);
 
-jbBtn.onclick=()=>{
-  jb=!jb;
-  jbBtn.classList.toggle("active",jb);
-};
-fbBtn.onclick=()=>{
-  fb=!fb;
-  fbBtn.classList.toggle("active",fb);
-};
+jbBtn.onclick=()=>{jb=!jb;jbBtn.classList.toggle("active",jb);};
+fbBtn.onclick=()=>{fb=!fb;fbBtn.classList.toggle("active",fb);};
 
 function calcPts(p){
   if(jb&&fb) return p-2;
@@ -258,10 +275,8 @@ function calcPts(p){
 function addPlayer(){
   const n=+num.value,p=+pts.value,t=teamSelect.value;
   if(!n||isNaN(p))return;
-  if(players.filter(x=>x.team===t).length>=12)
-    return alert("Max 12 players per team");
-  if(players.find(x=>x.team===t&&x.num===n))
-    return alert("Number already exists");
+  if(players.filter(x=>x.team===t).length>=12) return alert("Max 12 players");
+  if(players.find(x=>x.team===t&&x.num===n)) return alert("Number exists");
 
   players.push({num:n,pts:calcPts(p),team:t,jb,fb});
   num.value=pts.value="";
@@ -345,8 +360,15 @@ function undoChange(team){
 
 function startGame(){
   tempActive={heim:[...active.heim],gast:[...active.gast]};
+  period="Q1";
+
   setupView.classList.add("hidden");
   gameView.classList.remove("hidden");
+
+  document.querySelectorAll(".periods div").forEach(d=>{
+    d.classList.toggle("active", d.dataset.p==="Q1");
+  });
+
   render();
 }
 
@@ -373,5 +395,6 @@ document.querySelectorAll(".periods div").forEach(d=>{
 
 render();
 </script>
+
 </body>
 </html>
