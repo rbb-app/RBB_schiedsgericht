@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <base href="/RBB_Scores/">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover,
+               user-scalable=no, maximum-scale=1">
+
 <title>RBB Scores</title>
 
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,85 +24,89 @@
 @media(prefers-color-scheme:dark){
   :root{--bg:#121212;--fg:#fff;--card:#1e1e1e;}
 }
-
 body{
-  margin:0; padding:12px;
+  margin:0;
+  padding:12px;
   font-family:Arial,Helvetica,sans-serif;
-  background:var(--bg); color:var(--fg);
+  background:var(--bg);
+  color:var(--fg);
 }
-
-button,input,select{ font-size:14px; padding:6px; }
+button,input,select{font-size:14px;padding:6px;}
 h3{text-align:center;margin:8px 0;}
 .hidden{display:none;}
-
-/* SAFE AREA */
-#setupView{ padding-top:calc(env(safe-area-inset-top) + 8px); }
-
-/* HEADER */
+/* ---------- SAFE AREA ---------- */
+#setupView{padding-top:calc(env(safe-area-inset-top)+12px);}
+#gameView{padding-top:calc(env(safe-area-inset-top)+12px);}
 #appHeader{text-align:center;margin-bottom:10px;}
-#appHeader img{ width:96px; height:96px; border-radius:20%; }
+#appHeader img{width:96px;height:96px;border-radius:20%;}
 
-/* LAYOUT */
-.container{ display:flex; gap:10px; flex-wrap:wrap; }
-.team{ flex:1; background:var(--card); border-radius:10px; padding:10px; min-width:150px; transition:.3s; }
-.team.ok{background:var(--ok);} .team.fail{background:var(--fail);}
+/* ---------- LAYOUT ---------- */
+.container{display:flex;gap:10px;flex-wrap:wrap;}
+.team{flex:1;background:var(--card);border-radius:10px;padding:10px;min-width:150px;transition:.3s;}
+.team.ok{background:var(--ok);}
+.team.fail{background:var(--fail);}
 
-/* PLAYERS */
-.players{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; }
-.player{ position:relative; min-width:60px; padding:8px; border:2px solid #666; border-radius:8px; text-align:center; cursor:pointer; }
+/* ---------- PLAYERS ---------- */
+.players{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+.player{position:relative;min-width:60px;padding:8px;border:2px solid #666;border-radius:8px;text-align:center;cursor:pointer;}
 .player.active{background:rgba(0,255,0,.25);}
-.remove{ position:absolute; top:2px; right:4px; color:red; font-weight:bold; cursor:pointer; }
+.remove{position:absolute;top:2px;right:4px;color:red;font-weight:bold;cursor:pointer;}
 
-/* BONUS TAGS */
-.bonus{ position:absolute; font-size:10px; font-weight:bold; padding:2px 4px; border-radius:4px; color:#fff; }
-.fb{top:2px; left:2px; background:#e91e63;}
-.jb{bottom:2px; left:2px; background:#3f51b5;}
+/* ---------- BONUS TAGS ---------- */
+.bonus{position:absolute;font-size:10px;font-weight:bold;padding:2px 4px;border-radius:4px;color:#fff;}
+.fb{top:2px;left:2px;background:#e91e63;}
+.jb{bottom:2px;left:2px;background:#3f51b5;}
 
-/* INPUT */
-.input-line{ display:flex; gap:6px; justify-content:center; align-items:center; flex-wrap:wrap; }
-.input-line input[type=number]{ width:50px; text-align:center; }
-
-/* BONUS BUTTONS */
-.bonus-btn{ border:1px solid #666; border-radius:6px; padding:4px 8px; font-size:11px; opacity:.4; cursor:pointer; }
+/* ---------- INPUT ---------- */
+.input-line{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;}
+.input-line input[type=number]{width:50px;text-align:center;}
+.bonus-btn{border:1px solid #666;border-radius:6px;padding:4px 8px;font-size:11px;opacity:.4;cursor:pointer;}
 .bonus-btn.jb{background:#3f51b5;color:#fff;}
 .bonus-btn.fb{background:#e91e63;color:#fff;}
 .bonus-btn.active{opacity:1;}
 
-/* PERIODS */
-.periods{ margin-top:12px; margin-bottom:16px; display:flex; gap:6px; justify-content:center; }
-.periods div{ padding:6px 10px; border-radius:6px; border:1px solid #666; cursor:pointer; }
-.periods .active{ background:#4caf50; color:#fff; }
+/* ---------- PERIODS ---------- */
+.periods{
+  margin-top:12px; /* Abstand zur Statusbar */
+  margin-bottom:16px;
+  display:flex;
+  gap:6px;
+  justify-content:center;
+}
+.periods div{
+  padding:6px 8px;
+  border-radius:6px;
+  border:1px solid #666;
+  cursor:pointer;
+}
+.periods .active{background:#4caf50;color:#fff;}
 
-/* STATUS */
-.status{text-align:center; font-weight:bold; margin-top:6px;}
+/* ---------- STATUS ---------- */
+.status{text-align:center;font-weight:bold;margin-top:6px;}
 .fail-text{color:#f44336;}
 </style>
 </head>
 
 <body>
 
-<!-- SETUP VIEW -->
+<!-- ================= SETUP VIEW ================= -->
 <div id="setupView">
   <div id="appHeader">
     <img src="icon.png" alt="RBB Scores">
   </div>
-
   <h3>Setup</h3>
-
   <div style="text-align:center">
     Home <input id="nameHeim" value="Home"><br>
     Guest <input id="nameGast" value="Guest">
   </div>
 
   <h3>Add Player</h3>
-
   <div class="input-line">
     No <input id="num" type="number">
     Pts <input id="pts" type="number" step="0.5">
     <button id="jbBtn" class="bonus-btn jb">JB</button>
     <button id="fbBtn" class="bonus-btn fb">FB</button>
   </div>
-
   <div class="input-line">
     <select id="teamSelect">
       <option value="heim">Home</option>
@@ -123,9 +131,8 @@ h3{text-align:center;margin:8px 0;}
   </div>
 </div>
 
-<!-- GAME VIEW -->
+<!-- ================= GAME VIEW ================= -->
 <div id="gameView" class="hidden">
-
   <div class="periods" id="periods">
     <div data-p="Q1">Q1</div>
     <div data-p="Q2">Q2</div>
@@ -157,15 +164,26 @@ h3{text-align:center;margin:8px 0;}
   </div>
 
   <div style="text-align:center;margin-top:10px">
-    <button onclick="downloadCSV()">Download CSV</button>
-    <button onclick="endGame()">End Game</button>
+    <button onclick="endGame()">End Game & Download CSV</button>
   </div>
 </div>
 
 <script>
-let players=[], active={heim:[],gast:[]}, tempActive={heim:[],gast:[]}, log=[], period="Q1";
-let jb=false, fb=false;
-const vib=m=>navigator.vibrate&&navigator.vibrate(m);
+let players=[];
+let active={heim:[],gast:[]};
+let tempActive={heim:[],gast:[]};
+let log=[];
+let period="Q1";
+let jb=false,fb=false;
+
+function vib(ms){if(navigator.vibrate) navigator.vibrate(ms);}
+const jbBtn=document.getElementById("jbBtn");
+const fbBtn=document.getElementById("fbBtn");
+const num=document.getElementById("num");
+const pts=document.getElementById("pts");
+const teamSelect=document.getElementById("teamSelect");
+const setupView=document.getElementById("setupView");
+const gameView=document.getElementById("gameView");
 
 jbBtn.onclick=()=>{jb=!jb;jbBtn.classList.toggle("active",jb);};
 fbBtn.onclick=()=>{fb=!fb;fbBtn.classList.toggle("active",fb);};
@@ -177,40 +195,95 @@ function calcPts(p){
   return p;
 }
 
+function saveState(){
+  localStorage.setItem("players",JSON.stringify(players));
+  localStorage.setItem("active",JSON.stringify(active));
+  localStorage.setItem("tempActive",JSON.stringify(tempActive));
+  localStorage.setItem("log",JSON.stringify(log));
+  localStorage.setItem("period",period);
+  localStorage.setItem("gameStarted",gameView.classList.contains("hidden")?"false":"true");
+}
+
+function loadState(){
+  if(localStorage.getItem("players")){
+    players=JSON.parse(localStorage.getItem("players"));
+    active=JSON.parse(localStorage.getItem("active"));
+    tempActive=JSON.parse(localStorage.getItem("tempActive"));
+    log=JSON.parse(localStorage.getItem("log"));
+    period=localStorage.getItem("period")||"Q1";
+
+    if(localStorage.getItem("gameStarted")==="true"){
+      setupView.classList.add("hidden");
+      gameView.classList.remove("hidden");
+      document.querySelectorAll(".periods div").forEach(d=>{
+        d.classList.toggle("active", d.dataset.p===period);
+      });
+    }
+  }
+}
+
 function addPlayer(){
-  const n=+num.value, p=+pts.value, t=teamSelect.value;
-  if(!n||isNaN(p)) return;
+  const n=+num.value,p=+pts.value,t=teamSelect.value;
+  if(!n||isNaN(p))return;
   if(players.filter(x=>x.team===t).length>=12) return alert("Max 12 players");
   if(players.find(x=>x.team===t&&x.num===n)) return alert("Number exists");
-
-  players.push({num:n, pts:calcPts(p), team:t, jb, fb});
+  players.push({num:n,pts:calcPts(p),team:t,jb,fb});
   num.value=pts.value="";
-  jb=fb=false; jbBtn.classList.remove("active"); fbBtn.classList.remove("active");
+  jb=fb=false;
+  jbBtn.classList.remove("active");
+  fbBtn.classList.remove("active");
   vib(10);
   render();
 }
 
 function removePlayer(num,team){
-  players = players.filter(p=>!(p.num===num && p.team===team));
-  tempActive[team] = tempActive[team].filter(n=>n!==num);
-  active[team] = active[team].filter(n=>n!==num);
+  players=players.filter(p=>!(p.num===num && p.team===team));
+  tempActive[team]=tempActive[team].filter(n=>n!==num);
+  active[team]=active[team].filter(n=>n!==num);
   render();
+  vib(20);
+}
+
+function render(){
+  document.getElementById("heimTitle").textContent=nameHeim.value;
+  document.getElementById("gastTitle").textContent=nameGast.value;
+  document.getElementById("heimTitleSetup").textContent=nameHeim.value;
+  document.getElementById("gastTitleSetup").textContent=nameGast.value;
+
+  renderList("heim","heimPlayersSetup",true);
+  renderList("gast","gastPlayersSetup",true);
+  renderList("heim","heimPlayers",false);
+  renderList("gast","gastPlayers",false);
+
+  ["heim","gast"].forEach(t=>{
+    const sum=tempActive[t].reduce((a,n)=>a+(players.find(p=>p.team===t&&p.num===n)?.pts||0),0);
+    const teamDiv=document.getElementById(t+"Team");
+    const st=document.getElementById(t+"Status");
+    const act=document.getElementById(t+"Actions");
+    teamDiv.className="team "+(sum<=14.5?"ok":"fail");
+    st.textContent = `Points: ${sum.toFixed(1)}`;
+    if(JSON.stringify(active[t])!==JSON.stringify(tempActive[t])){
+      act.classList.remove("hidden");
+      st.textContent += " (Changes not confirmed)";
+    } else {
+      act.classList.add("hidden");
+    }
+  });
+
+  saveState();
 }
 
 function renderList(team,target,setup){
   const d=document.getElementById(target);
   d.innerHTML="";
-  players.filter(p=>p.team===team).forEach(p=>{
+  players.filter(p=>p.team===team).sort((a,b)=>a.num-b.num).forEach(p=>{
     const e=document.createElement("div");
     e.className="player"+(tempActive[team].includes(p.num)?" active":"");
     e.innerHTML=`#${p.num}<br>${p.pts.toFixed(1)}`;
     if(p.fb) e.innerHTML+=`<div class="bonus fb">FB</div>`;
     if(p.jb) e.innerHTML+=`<div class="bonus jb">JB</div>`;
-    if(setup){
-      e.innerHTML+=`<div class="remove" onclick="removePlayer(${p.num},'${p.team}')">×</div>`;
-    }else{
-      e.onclick=()=>toggle(team,p.num);
-    }
+    if(setup) e.innerHTML+=`<div class="remove" onclick="removePlayer(${p.num},'${p.team}')">×</div>`;
+    else e.onclick=()=>toggle(team,p.num);
     d.appendChild(e);
   });
 }
@@ -218,7 +291,8 @@ function renderList(team,target,setup){
 function toggle(team,num){
   const l=tempActive[team];
   const i=l.indexOf(num);
-  if(i>=0) l.splice(i,1); else if(l.length<5) l.push(num);
+  if(i>=0) l.splice(i,1);
+  else if(l.length<5) l.push(num);
   vib(15);
   render();
 }
@@ -237,65 +311,24 @@ function undoChange(team){
   render();
 }
 
-function render(){
-  heimTitle.textContent=nameHeim.value;
-  gastTitle.textContent=nameGast.value;
-  heimTitleSetup.textContent=nameHeim.value;
-  gastTitleSetup.textContent=nameGast.value;
-
-  renderList("heim","heimPlayersSetup",true);
-  renderList("gast","gastPlayersSetup",true);
-  renderList("heim","heimPlayers",false);
-  renderList("gast","gastPlayers",false);
-
-  ["heim","gast"].forEach(t=>{
-    const sum=tempActive[t].reduce((a,n)=>a+(players.find(p=>p.team===t&&p.num===n)?.pts||0),0);
-    const teamDiv=document.getElementById(t+"Team");
-    const st=document.getElementById(t+"Status");
-    const act=document.getElementById(t+"Actions");
-
-    // Team Punkte anzeigen
-    st.textContent = `Points: ${sum.toFixed(1)}`;
-
-    teamDiv.className="team "+(sum<=14.5?"ok":"fail");
-
-    if(JSON.stringify(active[t])!==JSON.stringify(tempActive[t])){
-      act.classList.remove("hidden");
-      st.textContent += " (Changes not confirmed)";
-      st.className="status fail-text";
-    }else{
-      act.classList.add("hidden");
-      st.className="status";
-    }
-  });
-}
-
 function startGame(){
   tempActive={heim:[...active.heim],gast:[...active.gast]};
   period="Q1";
-
   setupView.classList.add("hidden");
   gameView.classList.remove("hidden");
-
-  document.querySelectorAll(".periods div").forEach(d=>{
-    d.classList.toggle("active", d.dataset.p==="Q1");
-  });
-
+  document.querySelectorAll(".periods div").forEach(d=>d.classList.toggle("active",d.dataset.p==="Q1"));
   render();
 }
 
-function downloadCSV(){
-  if(log.length===0){ alert("No entries yet"); return; }
+function endGame(){
   let csv="Time;Period;Team;Players;Points\n";
   log.forEach(l=>{
     csv+=`${l.time};${l.period};${l.team};${l.lineup.join(",")};${l.points}\n`;
   });
-  const url=URL.createObjectURL(new Blob([csv], {type:"text/csv"}));
-  window.open(url); // funktioniert auch auf iOS Homescreen
-}
-
-function endGame(){
-  downloadCSV();
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+  a.download="history.csv";
+  a.click();
   localStorage.clear();
   location.reload();
 }
@@ -305,9 +338,11 @@ document.querySelectorAll(".periods div").forEach(d=>{
     period=d.dataset.p;
     document.querySelectorAll(".periods div").forEach(x=>x.classList.remove("active"));
     d.classList.add("active");
+    saveState();
   };
 });
 
+loadState();
 render();
 </script>
 
